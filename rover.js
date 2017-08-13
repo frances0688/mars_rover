@@ -12,11 +12,14 @@ for (x = 0; x<xMax; x++) {
 //ADD YOUR COMMANDS HERE! Save and run to find out the rover's position.
 var input = "fffrfrrffflbblfffffffffff";
 
-
 var kata = {
-  position: [3,1],
+  position: [3,2],
   direction: 'N'
 };
+
+var obstacleArray = [
+  [5,8], [3,5], [6,1]
+];
 
 var right = {
   N: 'E',
@@ -40,20 +43,30 @@ var commands = {
 };
 
 function goForward(rover) {
+  var position1, position0;
   switch(rover.direction) {
     case 'N':
-      rover.position[1]++;
+      position1 = rover.position[1]+1;
+      position0 = rover.position[0];
       break;
     case 'E':
-      rover.position[0]++;
+      position1 = rover.position[1];
+      position0 = rover.position[0]+1;
       break;
     case 'S':
-      rover.position[1]--;
+      position1 = rover.position[1]-1;
+      position0 = rover.position[0];
       break;
     case 'W':
-      rover.position[0]--;
+      position1 = rover.position[1];
+      position0 = rover.position[0]-1;
       break;
     }
+  if (obstacle(position0, position1)){
+    return true;
+  }
+    rover.position[0] = position0;
+    rover.position[1] = position1;
   if (rover.position[0] >= xMax) {
     rover.position[0] = 0;
   }
@@ -64,20 +77,30 @@ function goForward(rover) {
 }
 
   function goBackward(rover) {
+    var position1, position0;
     switch(rover.direction) {
       case 'N':
-        rover.position[1]--;
+      position1 = rover.position[1]-1;
+      position0 = rover.position[0];
         break;
       case 'E':
-        rover.position[0]--;
+      position1 = rover.position[1];
+      position0 = rover.position[0]-1;
         break;
       case 'S':
-        rover.position[1]++;
+      position1 = rover.position[1]+1;
+      position0 = rover.position[0];
         break;
       case 'W':
-        rover.position[0]++;
+      position1 = rover.position[1];
+      position0 = rover.position[0]+1;
           break;
       }
+    if (obstacle(position0, position1)){
+        return true;
+      }
+        rover.position[0] = position0;
+        rover.position[1] = position1;
     if (rover.position[0] >= xMax) {
       rover.position[0] = 0;
     }
@@ -94,8 +117,25 @@ function goForward(rover) {
       rover.direction = left[rover.direction];
 }
 
+function obstacle(position0, position1) {
+  switch (true){
+    case position0 === obstacleArray[0][0] && position1 === obstacleArray[0][1]:
+    console.log("Watch out! There seems to be a canyon on your path's way. Try another route.");
+    return true;
+    case position0 === obstacleArray[1][0] && position1 === obstacleArray[1][1]:
+    console.log("Stop! We're not alone! You've found an alien colony. Let's go make some friends :)");
+    return true;
+    case position0 === obstacleArray[2][0] && position1 === obstacleArray[2][1]:
+    console.log("You can't get through...It's an ocean! We might be able to live here after all!");
+    return true;
+  }
+  return false;
+}
+
 for (var i = 0; i < input.length; i++){
-  commands[input[i]](kata);
+  if (commands[input[i]](kata)){
+    break;
+  }
   console.log("Rover Kata's New Position: [" + kata.position[0] + ", " + kata.position[1] + "]" + " facing " + kata.direction);
 }
 console.log("Rover Kata's Final Position: [" + kata.position[0] + ", " + kata.position[1] + "]" + " facing " + kata.direction);
